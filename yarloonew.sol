@@ -882,38 +882,7 @@ contract Yarloo is Context, IBEP20, Ownable {
         deployerAddress.transfer(deployerSettlement);
     }
     
-    /* Burn Tokens */
-    function _burn(address _who, uint256 _value) internal {
-        uint256 rValue = _value * _getRate();
-        require(rValue <= _rOwned[_who]);
-        _rOwned[_who] = _rOwned[_who].sub(_value);
-        _rTotal = _rTotal.sub(rValue);
-        _tTotal = _tTotal.sub(_value);
-        if (_isExcluded[_who]) {
-            _tOwned[_who] = _tOwned[_who].sub(_value);
-        }
-        emit Transfer(_who, address(0), _value);
-    }
 
-    function burn(uint256 amount) public virtual {
-        _burn(_msgSender(), amount);
-    } 
-    
-    /* Mint Functionality for Cross Chain Functionality */
-    function _mint(address account, uint256 amount) internal {
-        uint256 rValue = amount * _getRate();
-        _rTotal = _rTotal.add(rValue);
-        _tTotal = _tTotal.add(amount);
-        _rOwned[account] = _rOwned[account].add(amount);
-        if (_isExcluded[account]) {
-            _tOwned[account] = _tOwned[account].add(amount);
-        }
-        emit Transfer(address(0), account, amount);
-    }
-    function mint(uint256 amount) public virtual onlyOwner{
-        _mint(_msgSender(), amount);
-    } 
-    
     
     /* to recieve BNB from pancakeswapV2Router when swaping */
     receive() external payable {}
